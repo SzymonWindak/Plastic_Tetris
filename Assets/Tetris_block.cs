@@ -9,14 +9,28 @@ public class Tetris_block : MonoBehaviour {
     public static int height = 20;
     public static int width = 10;
     private static Transform[,] grid = new Transform[width, height];
+    
 
     // Use this for initialization
     void Start() {
-
+        
+        
+        
     }
 
     // Update is called once per frame
     void Update() {
+
+        if (FindObjectOfType<SpawnerTetromino>().detector == true && transform.position.x > width)
+        {
+            // Detector checks if there is updating block on the play zone
+            // If not, this If moves next block to the spawn location from the side
+            // And spawns another one
+
+            FindObjectOfType<SpawnerTetromino>().NewTetromino();
+            transform.position = new Vector3(5, 18, 0);
+            FindObjectOfType<SpawnerTetromino>().detector = false;
+        }
 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
@@ -50,11 +64,14 @@ public class Tetris_block : MonoBehaviour {
             if (!ValidMove())
             {
                 transform.position -= new Vector3(0, -1, 0);
+                if (transform.position.x < width)
+                {
+                    // If blocka cannot move anymore and is in the play zone it enables detector 
+                    FindObjectOfType<SpawnerTetromino>().detector = true;
+                }
                 AddToGrid();
                 CheckForLines();
                 this.enabled = false;
-                FindObjectOfType<SpawnerTetromino>().NewTetromino();
-
             }
             previousTime = Time.time;
         }
